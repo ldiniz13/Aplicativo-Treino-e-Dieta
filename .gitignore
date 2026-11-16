@@ -1,0 +1,17 @@
+# Dependências e lixo
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# Ligação local com a Vercel (cada computador cria a sua ao publicar)
+.vercel/
+app/.vercel/
+
+# Arquivos locais do Claude Code
+.claude/settings.local.json
+.claude/worktrees/
+
+# Rascunhos
+*.tmp
+*.bak

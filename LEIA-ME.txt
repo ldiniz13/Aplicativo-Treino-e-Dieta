@@ -1,0 +1,83 @@
+PULSO · Treino, Dieta e Evolução
+=================================
+
+COMO A PASTA ESTÁ ORGANIZADA
+  app\                   -> o aplicativo (só esta pasta vai para a internet)
+     index.html          -> o app inteiro (abre direto no navegador)
+     firebase-config.js  -> chaves do login (Google / e-mail). Veja "ATIVAR LOGIN".
+     manifest.webmanifest, sw.js, icons\  -> deixam o app instalável no Android e offline
+     tutorial\           -> vídeo tutorial mostrado dentro do app
+     vercel.json         -> configuração da Vercel
+  firestore.rules        -> regras de segurança do banco (colar no Firebase, passo 5)
+  PUBLICAR.cmd           -> dois cliques para publicar/atualizar o site
+  LEIA-ME.txt            -> este arquivo
+
+
+PUBLICAR NA VERCEL (grátis)
+  1. Dê dois cliques em PUBLICAR.cmd.
+  2. Na PRIMEIRA vez, responda:
+       Which project?                    -> Create a new project
+       Project name?                     -> pulso-fit
+       In which directory is your code?  -> ./  (só Enter)
+       Want to modify these settings?    -> N
+     (Se pedir login, entre com GitHub, Google ou e-mail.)
+  3. Copie o link em "Production" (ex.: https://pulso-fit.vercel.app)
+     e mande para os amigos.
+  4. Para atualizar depois: dois cliques em PUBLICAR.cmd de novo.
+
+  Pelo terminal (alternativa):
+     npx vercel --prod --cwd "C:\Users\lucas\Projetos\20 - APP Treinos em casa\app"
+
+
+ATIVAR LOGIN (Google + e-mail, grátis, sem cartão)
+  Tudo no site https://console.firebase.google.com (entre com sua conta Google).
+
+  1. CRIAR O PROJETO
+     "Criar um projeto" (ou "Adicionar projeto") -> nome: pulso-fit -> Continuar
+     -> Google Analytics: DESATIVE -> Criar projeto -> Continuar.
+
+  2. REGISTRAR O APP WEB (gera as chaves)
+     Na página inicial do projeto, clique no ícone </> (Web).
+     Apelido: PULSO  (NÃO marque "Firebase Hosting") -> Registrar app.
+     Aparece um bloco "const firebaseConfig = { apiKey: ..., ... }".
+     Copie só o que está entre { } e cole em app\firebase-config.js no lugar do null:
+         window.PULSO_FIREBASE = { apiKey: "...", authDomain: "...", ... };
+     (Ou mande o bloco para o Claude colar.) -> Continuar no console.
+
+  3. LIGAR OS TIPOS DE LOGIN
+     Menu da esquerda: Criação (Build) -> Authentication -> Vamos começar.
+     Aba "Método de login":
+       - Google -> Ativar -> escolha seu e-mail de suporte -> Salvar.
+       - Adicionar novo provedor -> E-mail/senha -> ative só a 1ª chave -> Salvar.
+
+  4. AUTORIZAR O SITE
+     Authentication -> aba Configurações -> Domínios autorizados -> Adicionar domínio
+     -> pulso-fit.vercel.app  (o mesmo endereço do link "Production" da Vercel).
+     "localhost" já vem autorizado (para testar no PC).
+
+  5. CRIAR O BANCO (onde os dados ficam salvos)
+     Criação (Build) -> Firestore Database -> Criar banco de dados
+     -> Local: southamerica-east1 (São Paulo) -> Avançar
+     -> "Iniciar no modo de produção" -> Criar.
+     Aba "Regras": apague tudo, cole o conteúdo de firestore.rules -> Publicar.
+
+  6. PUBLICAR DE NOVO
+     Dois cliques em PUBLICAR.cmd. Pronto: o app pede login na primeira abertura
+     (dá para "Continuar sem conta").
+
+  Custo: plano gratuito (Spark). Aguenta folgado milhares de usuários por dia.
+  As chaves de firebase-config.js NÃO são secretas; quem protege os dados são
+  as regras do passo 5 (cada pessoa só lê e grava os próprios dados).
+
+
+INSTALAR NO CELULAR (Android)
+  Abra o link no Chrome -> toque em "Instalar" no aviso do app
+  (ou menu ⋮ -> "Instalar app" / "Adicionar à tela inicial").
+
+
+IMPORTANTE
+  - Sem login: os dados ficam só no celular de cada pessoa.
+    Para trocar de celular: Configurações (engrenagem) -> Exportar JSON / Importar JSON.
+  - Com login: os dados vão para a nuvem e aparecem em qualquer aparelho
+    (Configurações -> Conta e nuvem -> Sincronizar / Sair / Excluir conta).
+  - Quem abre pela primeira vez vê dados de demonstração: toque em "Zerar" para começar do zero.
