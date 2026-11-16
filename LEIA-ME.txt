@@ -1,9 +1,22 @@
 PULSO · Treino, Dieta e Evolução
 =================================
 
+DUAS VERSÕES NO MESMO SITE
+  /          -> PULSO COMPLETO (tudo: treinos A/B/C/D, dieta, medidas, evolução, níveis)
+  /simples/  -> PULSO SIMPLES (monta o treino em 4 toques e mostra uma série de cada vez)
+  As duas funcionam separadas (os dados de uma não aparecem na outra).
+  No app completo, Configurações tem um botão "Abrir o PULSO Simples".
+  Publicando com PUBLICAR.cmd, as duas vão juntas. Exemplo de links:
+     https://pulso-fit.vercel.app/          (completo)
+     https://pulso-fit.vercel.app/simples/  (simples)
+
 COMO A PASTA ESTÁ ORGANIZADA
+  HANDOFF.md             -> resumo técnico completo do projeto (para quem for continuar)
+  docs\SIMPLES-UX.md     -> por que existe a versão Simples e como foi pensada
+  tools\                 -> ferramentas de apoio (geram dados e conferem os planos)
   app\                   -> o aplicativo (só esta pasta vai para a internet)
-     index.html          -> o app inteiro (abre direto no navegador)
+     simples\            -> a versão Simples (index.html, estilo.css, js\)
+     index.html          -> o app COMPLETO inteiro (abre direto no navegador)
      firebase-config.js  -> chaves do login (Google / e-mail). Veja "ATIVAR LOGIN".
      manifest.webmanifest, sw.js, icons\  -> deixam o app instalável no Android e offline
      tutorial\           -> vídeo tutorial mostrado dentro do app

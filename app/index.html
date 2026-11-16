@@ -4252,6 +4252,10 @@ function openSettings() {
   const s = S.settings;
   openModal({ onClose: () => render(), html: `<div class="sheet-grip"></div>
     <div class="sheet-h"><h2>Configurações</h2><button class="icon-btn" data-action="close" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+    <section class="set-sec"><h4><i data-lucide="sparkles"></i>Versão mais simples</h4>
+      <p class="muted small">Achou muita coisa? O <b>PULSO Simples</b> monta o treino por você em 4 toques e mostra uma série de cada vez.</p>
+      <a class="btn btn-primary btn-lg" href="simples/" style="text-decoration:none">Abrir o PULSO Simples</a>
+    </section>
     <section class="set-sec"><h4><i data-lucide="cloud"></i>Conta e nuvem</h4><div id="accBox">${accountInner()}</div></section>
     <section class="set-sec"><h4><i data-lucide="database"></i>Backup dos dados</h4>
       <p class="muted small">${CLOUD.user ? 'Com conta, seus dados já ficam na nuvem. O backup em arquivo é uma cópia extra.' : 'Sem conta, tudo fica salvo só neste aparelho. Exporte um backup de vez em quando — e use-o para levar seus dados para outro celular.'}</p>

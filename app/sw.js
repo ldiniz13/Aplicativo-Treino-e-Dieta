@@ -10,7 +10,8 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  /* só apaga versões antigas DESTE app (pulso-v*); a versão Simples guarda o cache dela em pulso-simples-* */
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE && k.startsWith('pulso-v')).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 const networkFirst = (req, key) => fetch(req).then(res => {
   if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(key || req, copy)); }
@@ -22,6 +23,7 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   const same = url.origin === self.location.origin;
+  if (same && url.pathname.startsWith(new URL('simples/', self.location).pathname)) return;   // a versão Simples tem o próprio service worker
   if (url.pathname.endsWith('.mp4') || url.pathname.endsWith('.webm')) return;   // vídeo: direto da rede (streaming)
   if (same && url.pathname.startsWith('/__/')) return;                             // telas do login do Firebase
   if (req.mode === 'navigate' || (same && (url.pathname === '/' || url.pathname.endsWith('/index.html')))) {
