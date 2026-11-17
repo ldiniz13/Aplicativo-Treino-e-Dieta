@@ -1,6 +1,6 @@
 # PULSO — Handoff
 
-> Última atualização: **2026-11-16** · Leia este arquivo primeiro. Quem retomar o projeto (pessoa ou Claude) deve conseguir continuar só com ele.
+> Última atualização: **2026-11-17** · Leia este arquivo primeiro. Quem retomar o projeto (pessoa ou Claude) deve conseguir continuar só com ele.
 
 ## 1. O que é
 
@@ -131,3 +131,14 @@ Regras de comportamento que não devem ser quebradas sem pensar:
 - Heredocs muito longos falham; escreva arquivos com a ferramenta de arquivo.
 - O servidor `python -m http.server` não suporta *Range*: vídeo não avança ao testar localmente (na Vercel funciona).
 - Texto de interface: português simples, sem jargão (evitar PR, volume, XP, "série concluída por rep"…).
+
+
+## 10. Retomada em 2026-11-17 - feedback do Lucas
+
+- Projeto aberto no CLI; servidor local na porta 5173, servindo `app/`. `/simples/` respondeu HTTP 200 e o endereço foi enviado ao navegador padrão.
+- **Feedback do Lucas:** gostou do começo guiado da Simples, que direciona a montagem do treino. Sentiu falta do restante do app, que era o diferencial.
+- **Direção para a próxima iteração:** manter a entrada guiada e recuperar os demais módulos da experiência completa, com navegação fácil. Treino e evolução sozinhos não representam toda a proposta.
+- Dieta, medidas, cardio e os demais recursos continuam preservados na completa em `/`. A Simples continua em `/simples/`.
+- A integração dos módulos **ainda não foi implementada**. Nesta retomada não houve alteração no código do app nem publicação de nova versão.
+- Instruções comuns de CLI e desktop em `../AGENTS.md`: handoffs atualizados, cuidado com trabalho paralelo e versionamento no GitHub.
+- No início desta retomada: repositório limpo, `main`, commit `a5e67c1`, sem remoto `origin`. GitHub em configuração.
