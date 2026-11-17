@@ -188,3 +188,13 @@ Regras de comportamento que não devem ser quebradas sem pensar:
 - Navegação conferida nas larguras 320, 375 e 1280 px; sem rolagem horizontal na página principal.
 - Recarga e módulo de dieta/hidratação testados sem internet após o cache assumir a página. Bibliotecas de ícones e gráficos ficam locais.
 - Tag desta entrega: `v3.1.0-rotina`. O estado do envio ao GitHub deve ser conferido pelo remoto, sem presumir publicação na Vercel.
+
+
+### GitHub confirmado
+
+- Código enviado e verificado em https://github.com/ldiniz13/Aplicativo-Treino-e-Dieta.
+- Commit da versão: `ba52c5833206823329819f095b689feae052699e`; tag publicada: `v3.1.0-rotina`.
+- As tags históricas `v2.1.0-completo` e `v3.0.0-simples` continuam locais: o GitHub bloqueou esses refs pelo e-mail privado nos commits antigos. Não use `push --tags` para contornar isso; envie explicitamente a nova tag e a branch. A proteção de privacidade foi mantida.
+- O token de ambiente usado por outros programas foi preservado. Git usa o login local do GitHub CLI, salvo no cofre do Windows, por um helper específico para github.com.
+- Foi criado um repositório privado vazio `ldiniz13/pulso-fit` na tentativa inicial. Ele não recebeu o código e não é o remoto do projeto; foi preservado sem exclusão.
+- A implantação Vercel de produção não foi alterada nesta tarefa. A versão atual pode ser conferida no servidor local.
