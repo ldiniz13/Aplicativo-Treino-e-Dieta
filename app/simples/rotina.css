@@ -1,0 +1,30 @@
+﻿/* Rotina completa: mesma linguagem visual, com os recursos organizados por objetivo. */
+.abas-in{grid-template-columns:repeat(5,minmax(0,1fr))}
+.aba{font-size:11px;gap:5px;min-width:0;min-height:68px}
+.aba.on{background:linear-gradient(180deg,rgba(198,255,61,.07),transparent)}
+.aba .ic{width:22px;height:22px}
+.rotina-titulo{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.rotina-titulo h2{font-size:19px;letter-spacing:0}
+.rotina-titulo>span{color:var(--fraco);font-size:11px;text-align:right}
+.rotina-grade{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rotina-atalho{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:8px;background:var(--card);border:1px solid var(--linha);border-radius:20px;padding:18px 15px;min-height:184px}
+.rotina-atalho>b{font-size:16px}.rotina-atalho>small{color:var(--suave);font-size:12px;line-height:1.5;flex:1}
+.rotina-icone{width:42px;height:42px;border-radius:13px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(198,255,61,.09);color:var(--lima)}
+.rotina-icone .ic{width:22px;height:22px}.cor-dieta{color:#ffb547;background:rgba(255,181,71,.1)}.cor-agua{color:var(--ciano);background:rgba(34,228,255,.1)}
+.rotina-link{display:flex;gap:4px;align-items:center;color:var(--lima);font-size:12px;font-weight:600}.rotina-link .ic{width:15px;height:15px}
+.rotina-convite{font-size:12px;line-height:1.65;color:var(--suave);margin:14px 2px 0}
+.rotina-proximo{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:16px 14px;margin-top:12px;border:1px solid rgba(198,255,61,.24);border-radius:18px;background:rgba(198,255,61,.035)}
+.rotina-proximo small{display:block;font-size:10px;letter-spacing:.1em;color:var(--suave);margin-bottom:4px}.rotina-proximo b{font-size:14px;line-height:1.4;display:block}
+.rotina-lista{padding:0;overflow:hidden}.rotina-item{width:100%;display:flex;align-items:center;gap:12px;padding:17px 15px;text-align:left;min-height:83px}.rotina-item+.rotina-item{border-top:1px solid var(--linha)}
+.rotina-item b{display:block;font-size:15px}.rotina-item small{display:block;font-size:12px;line-height:1.55;color:var(--suave);margin-top:4px}.rotina-item>.ic{width:16px;color:var(--fraco)}
+.rotina-filtros{display:flex;gap:4px;background:var(--card);padding:5px;border:1px solid var(--linha);border-radius:14px}
+.rotina-filtros button{flex:1;min-height:40px;border-radius:10px;font-size:13px;color:var(--suave)}.rotina-filtros button.on{background:var(--card2);color:var(--lima);font-weight:700}
+.tela-modulo{gap:12px;padding-left:12px;padding-right:12px}.tela-modulo>.cab{padding:0 6px}
+.rotina-frame{display:block;width:100%;border:0;background:var(--bg);height:calc(100dvh - 210px - var(--safe-t) - var(--safe-b));min-height:340px;border-radius:14px}
+.tela-modulo:has(.rotina-filtros) .rotina-frame{height:calc(100dvh - 260px - var(--safe-t) - var(--safe-b))}
+.rotina-ajuda{font-size:11px;color:var(--fraco);text-align:center}.rotina-backup{display:grid;gap:12px}.rotina-backup>div{display:flex;gap:10px;align-items:center}.rotina-backup h2{font-size:18px}.rotina-backup>div>.ic{color:var(--ciano)}
+.rotina-classica{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--suave);font-size:13px;text-decoration:none;min-height:44px}.rotina-classica .ic{width:15px}.rotina-versao{font-size:11px;color:var(--fraco);text-align:center}
+button:focus-visible,a:focus-visible{outline:2px solid var(--ciano);outline-offset:4px}
+@media(min-width:700px){#app{max-width:620px}.abas-in{max-width:620px}.tela{padding-left:26px;padding-right:26px}.tela-modulo{padding-left:18px;padding-right:18px}}
+@media(max-width:360px){.rotina-atalho{padding:14px 11px;min-height:180px}.rotina-titulo{align-items:flex-start}.rotina-titulo h2{font-size:17px}.rotina-item{padding:15px 12px}.rotina-item b{font-size:14px}.aba{font-size:10px}.tela-modulo>.cab p{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.tela{animation:none}*{scroll-behavior:auto!important}}

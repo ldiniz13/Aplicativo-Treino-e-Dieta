@@ -1,7 +1,7 @@
 /* PULSO Simples — utilitários: datas, números, ícones, avisos, janelas (folhas), som */
 (function () {
   const P = window.P = window.P || {};
-  P.VERSAO = '3.0.0';
+  P.VERSAO = '3.1.0';
 
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -33,6 +33,10 @@
 
   /* ---------- ícones (traço simples, estilo Lucide) ---------- */
   const ICONES = {
+    comida: '<path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v19M18 3c-2 3-3 6-3 9h4M19 3v19"/>',
+    agua: '<path d="M12 3C10 6 5 11 5 15a7 7 0 0 0 14 0c0-4-5-9-7-12Z"/><path d="M9 16a3 3 0 0 0 3 3"/>',
+    grade: '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+
     play: '<polygon points="6 3 20 12 6 21 6 3"/>',
     check: '<path d="M20 6 9 17l-5-5"/>',
     plus: '<path d="M5 12h14M12 5v14"/>',

@@ -110,6 +110,7 @@
   A.alterna = el => { const k = el.dataset.k; P.S[k] = !P.S[k]; P.salvar(); P.render(); };
   A['rever-dicas'] = () => { P.S.dicas = {}; P.salvar(); P.render(); P.toast('As dicas vão aparecer de novo.'); };
   A.exportar = () => {
+    if (P.exportarRotina) return P.exportarRotina();
     const blob = new Blob([JSON.stringify({ ...P.S, sessao: null }, null, 1)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `pulso-simples-${P.dkey(Date.now())}.json`;
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
@@ -122,6 +123,7 @@
     r.onload = () => {
       try {
         const o = JSON.parse(r.result);
+        if (P.importarRotina) return P.importarRotina(o);
         if (!o || typeof o !== 'object' || !Array.isArray(o.historico)) throw new Error('formato');
         if (!confirm('Importar este backup? Ele substitui os dados atuais deste aparelho.')) return;
         P.S = P.migrar(o); P.S.sessao = null; P.salvar(); P.fecharTodas(); P.render(); P.toast('Backup importado!');
@@ -207,7 +209,7 @@
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); P.instalarEvt = e; if (!P.S.sessao && !P.wiz && !P.ui.resumo) P.render(); });
   window.addEventListener('appinstalled', () => { P.instalarEvt = null; });
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => { /* sem offline, tudo bem */ }); });
+    window.addEventListener('load', () => { Promise.allSettled([navigator.serviceWorker.register('sw.js'), navigator.serviceWorker.register('../sw.js')]); });
   }
 
   /* ---------- início ---------- */

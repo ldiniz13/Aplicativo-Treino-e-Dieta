@@ -1,0 +1,104 @@
+/* Teste de integração: executar com Playwright no NODE_PATH e o app servido na porta 5173. */
+const { chromium } = require('playwright');
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const URL_APP = process.env.PULSO_TEST_URL || 'http://127.0.0.1:5173/simples/';
+const output = path.join(process.env.TEMP || '.', 'pulso-qa');
+const executablePath = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe'].find(fs.existsSync);
+(async () => {
+  const browser = await chromium.launch({ headless: true, executablePath });
+  const context = await browser.newContext({ viewport: { width: 375, height: 812 }, serviceWorkers: 'block', acceptDownloads: true });
+  await context.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
+  const page = await context.newPage(), errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  page.setDefaultTimeout(15000);
+  const abrir = async modulo => { await page.locator(`[data-a="rotina-abrir"][data-modulo="${modulo}"]`).last().click(); };
+  const frame = () => page.frameLocator('#moduloRotina');
+  const semOverflow = async () => { assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Página com rolagem horizontal'); };
+  await page.goto(URL_APP, { waitUntil: 'domcontentloaded' });
+  await page.locator('.abas-in button').nth(4).waitFor();
+  assert.equal(await page.locator('.abas-in button').count(), 5);
+  await semOverflow();
+  await page.screenshot({ path: path.join(output, 'inicio-mobile.png'), fullPage: true });
+  await page.locator('[data-a="assist-novo"]').first().click();
+  for (const [k, v] of [['foco', 'corpo'], ['local', 'casa']]) await page.locator(`[data-a="assist-escolher"][data-k="${k}"][data-v="${v}"]`).click();
+  await page.locator('[data-a="assist-prox"]').click();
+  for (const [k, v] of [['dias', '3'], ['tempo', '30']]) await page.locator(`[data-a="assist-escolher"][data-k="${k}"][data-v="${v}"]`).click();
+  await page.locator('[data-a="assist-usar"]').click();
+  assert(await page.evaluate(() => !!P.S.plano && P.S.plano.treinos.length === 3));
+  console.log('OK: assistente preservado e plano criado');
+  await abrir('dieta');
+  await frame().getByRole('heading', { name: 'Dieta', exact: true }).waitFor();
+  await frame().locator('[data-action="water"][data-d="250"]').first().click();
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('pulso.fit.v1')).diet[P.dkey(Date.now())].water), 250);
+  await page.screenshot({ path: path.join(output, 'dieta-mobile.png'), fullPage: true });
+  console.log('OK: dieta e hidratação integradas');
+  await abrir('evolucao'); await page.locator('[data-a="rotina-abrir"][data-modulo="medidas"]').first().click();
+  await frame().locator('[data-action="m-new"]').first().click();
+  await frame().locator('[data-mf="weight"]').fill('75');
+  await frame().locator('[data-mf="waist"]').fill('88');
+  await frame().locator('[data-action="m-save"]').click();
+  assert(await page.evaluate(() => JSON.parse(localStorage.getItem('pulso.fit.v1')).measures.some(m => m.weight === 75 && m.waist === 88)));
+  console.log('OK: medidas salvas');
+  await abrir('mais'); await page.locator('[data-a="rotina-abrir"][data-modulo="cardio"]').first().click();
+  await frame().locator('[data-action="cardio-new"]').click();
+  await frame().locator('#cd-min').fill('25'); await frame().locator('#cd-km').fill('3');
+  await frame().locator('[data-action="cardio-save"], [data-action="cd-save"]').first().click();
+  assert(await page.evaluate(() => JSON.parse(localStorage.getItem('pulso.fit.v1')).workouts.some(w => w.cardio.some(c => c.min === 25))));
+  console.log('OK: cardio salvo');
+  for (const [modulo, titulo] of [['conquistas', 'Acompanhamento'], ['guiado', 'Treino acompanhado'], ['conta', 'Conta e preferências'], ['biblioteca', null]]) {
+    await abrir('mais'); await page.locator(`[data-a="rotina-abrir"][data-modulo="${modulo}"]`).first().click();
+    if (titulo) await frame().getByRole('heading', { name: titulo, exact: true }).waitFor();
+    else await frame().locator('#view').waitFor();
+  }
+  console.log('OK: acompanhamento, voz, conta e biblioteca acessíveis');
+  await abrir('mais');
+  const downloadPromise = page.waitForEvent('download'); await page.locator('[data-a="rotina-exportar"]').click();
+  const download = await downloadPromise, file = path.join(output, 'backup-teste.json'); await download.saveAs(file);
+  const backup = JSON.parse(fs.readFileSync(file, 'utf8'));
+  assert.equal(backup.tipo, 'pulso-rotina'); assert(backup.treino.plano); assert.equal(backup.rotina.measures.length, 1);
+  page.once('dialog', d => d.accept());
+  await page.locator('#rotinaBackup').setInputFiles(file);
+  await page.locator('[data-a="comecar"]').first().waitFor();
+  assert(await page.evaluate(() => !!P.S.plano && P.rotina().measures.length === 1));
+  console.log('OK: backup unificado exportado e restaurado');
+  for (const width of [320, 375, 1280]) { await page.setViewportSize({ width, height: 812 }); await semOverflow(); }
+  await page.setViewportSize({ width: 375, height: 812 }); await abrir('mais');
+  await page.screenshot({ path: path.join(output, 'mais-mobile.png'), fullPage: true });
+
+  await abrir('hoje'); await page.locator('[data-a="comecar"]').first().click();
+  await page.locator('[data-a="serie-feita"]').click();
+  await page.locator('[data-a="sair-treino"]').click();
+  await page.locator('[data-a="encerrar"]').click();
+  await page.locator('[data-a="fechar-resumo"]').click();
+  assert.equal(await page.evaluate(() => P.S.historico.length), 1);
+  for (let i = 0; i < 2; i++) {
+    await abrir('mais'); await page.locator('[data-a="rotina-abrir"][data-modulo="conquistas"]').first().click();
+    await frame().getByRole('heading', { name: 'Acompanhamento', exact: true }).waitFor();
+    const contagem = await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('pulso.fit.v1')); return { guiados: s.workouts.filter(w => w.source === 'pulso-guiado').length, cardio: s.workouts.filter(w => w.cardio.length).length, medidas: s.measures.length }; });
+    assert.deepEqual(contagem, { guiados: 1, cardio: 1, medidas: 1 });
+  }
+  console.log('OK: treino concluído integrado sem duplicar nem perder cardio e medidas');
+  await abrir('mais'); await page.locator('[data-a="rotina-abrir"][data-modulo="guiado"]').first().click();
+  await frame().locator('[data-action="gd-open"]').click();
+  await frame().locator('[data-action="gd-start"]').waitFor();
+  console.log('OK: programas do treino com voz disponíveis');
+  const offlineContext = await browser.newContext({ viewport: { width: 375, height: 812 }, serviceWorkers: 'allow' });
+  await offlineContext.route(/fonts\.(googleapis|gstatic)\.com/, r => r.abort());
+  const off = await offlineContext.newPage(); off.on('pageerror', e => errors.push(e.message));
+  await off.goto(URL_APP, { waitUntil: 'domcontentloaded' });
+  await off.waitForFunction(() => navigator.serviceWorker.controller?.scriptURL.endsWith('/simples/sw.js'), null, { timeout: 45000 });
+  await offlineContext.setOffline(true);
+  await off.reload({ waitUntil: 'domcontentloaded' });
+  await off.locator('[data-a="rotina-abrir"][data-modulo="dieta"]').last().click();
+  await off.frameLocator('#moduloRotina').getByRole('heading', { name: 'Dieta', exact: true }).waitFor();
+  await off.frameLocator('#moduloRotina').locator('[data-action="water"][data-d="250"]').first().click();
+  assert.equal(await off.evaluate(() => JSON.parse(localStorage.getItem('pulso.fit.v1')).diet[P.dkey(Date.now())].water), 250);
+  console.log('OK: início, módulos, ícones e hidratação funcionam offline');
+  await offlineContext.close();
+
+  assert.deepEqual(errors, []);
+  fs.writeFileSync(path.join(output, 'resultado.json'), JSON.stringify({ ok: true, errors, checks: ['onboarding', 'dieta', 'agua', 'medidas', 'cardio', 'conquistas', 'guiado', 'conta', 'biblioteca', 'backup', 'responsivo', 'treino-concluido', 'historico-sem-duplicacao', 'offline'] }, null, 2));
+  await browser.close(); console.log('PULSO_QA_OK');
+})().catch(e => { console.error(e); process.exit(1); });

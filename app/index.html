@@ -1185,8 +1185,10 @@ body.dnd-on,body.dnd-on *{cursor:grabbing!important;user-select:none!important;-
 <div id="toast-root"></div>
 <noscript><p style="padding:40px;text-align:center">Ative o JavaScript para usar o PULSO.</p></noscript>
 <script src="firebase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="modulos/integracao.css">
+<script src="modulos/integracao.js"></script>
+<script defer src="vendor/lucide.min.js"></script>
+<script defer src="vendor/chart.umd.min.js"></script>
 <script>
 (() => {
 'use strict';
@@ -2181,6 +2183,7 @@ function load() {
   let raw = null;
   try { raw = localStorage.getItem(STORE_KEY); } catch (e) { /* bloqueado */ }
   if (raw) { try { return migrate(JSON.parse(raw)); } catch (e) { /* corrompido → demo */ } }
+  if (window.PulsoModulos?.ativo) return freshState();
   const d = buildDemo(); d._fresh = true; return d;
 }
 
@@ -4294,7 +4297,9 @@ function importFile(el) {
       if (!o || typeof o !== 'object' || !Array.isArray(o.exercises) || !Array.isArray(o.workouts)) throw new Error('formato');
       const ok = await confirmBox('Importar backup?', `Os dados atuais serão substituídos por: ${o.workouts.length} treinos, ${(o.measures || []).length} avaliações e ${Object.keys(o.diet || {}).length} dias de dieta.`, 'Importar');
       if (!ok) return;
-      const keepSync = S.sync; S = migrate(o); S.sync = keepSync; save(); checkAchievements({ silent: true });
+      const keepSync = S.sync; S = migrate(o); S.sync = keepSync;
+      if (window.PulsoModulos?.ativo && o.guided) window.PulsoModulos.restaurarGuiado(o.guided);
+      save(); checkAchievements({ silent: true });
       closeAll(); render(true);
       toast('Backup importado!', 'Seus dados foram restaurados.', 'circle-check', 'var(--lime)');
     } catch (e) { toast('Arquivo inválido', 'Selecione um backup .json exportado pelo PULSO.', 'triangle-alert', 'var(--red)'); }
@@ -5058,13 +5063,17 @@ setInterval(tickSession, 250);
    13. BOOT
    ========================================================= */
 S = load();
+if (window.PulsoModulos?.ativo) window.PulsoModulos.iniciar({
+  estado: () => S, aba: t => { TAB = t; }, telas: VIEWS, estatisticas: stats,
+  cardio: cardioCard, esc, data: fmtD, salvar: save, cardapio: openQuiz,
+});
 if (S._fresh) { delete S._fresh; seedDemoBadges(); }
 checkAchievements({ silent: true });
 save();
 setNav();
 render(true);
 if (S.session) requestWake();
-window.addEventListener('load', () => { if (!window.lucide || !window.Chart) render(); });
+window.addEventListener('load', () => { render(); });
 /* conta: carrega o Firebase só se o login estiver configurado (app/firebase-config.js) */
 if (FB_CFG()) setTimeout(() => cloudInit(), 400);
 /* App instalável (PWA): só quando publicado em https, ex.: Vercel */

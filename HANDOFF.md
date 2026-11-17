@@ -14,14 +14,14 @@
 
 | | **Completa** (`/`) | **Simples** (`/simples/`) |
 |---|---|---|
-| Nome interno / tag git | `v2.1.0-completo` | `v3.0.0-simples` |
-| Para quê | Tudo: A/B/C/D com montador, caderno de séries, dieta, medidas, cardio, treino guiado 60+, níveis e medalhas, login | Montar o treino em 4 toques e fazer **uma série de cada vez**. Só treino + evolução |
+| Nome interno / tag git | `v2.1.0-completo` | `v3.1.0-rotina` |
+| Para quê | Tudo: A/B/C/D com montador, caderno de séries, dieta, medidas, cardio, treino guiado 60+, níveis e medalhas, login | Montar o treino em 4 toques e fazer **uma série de cada vez**. Treino guiado + dieta, medidas, cardio e acompanhamento completo |
 | Código | `app/index.html` (arquivo único, 3,1 MB) | `app/simples/` (vários arquivos, **sem etapa de build**) |
-| Dados no aparelho | `localStorage` chave `pulso.fit.v1` | `localStorage` chave `pulso.simples.v1` |
-| Service worker | `app/sw.js` (cache `pulso-v5`) | `app/simples/sw.js` (cache `pulso-simples-v1`) |
-| Login/nuvem | Pronto no código, aguardando config | Ainda não tem (só backup em arquivo) |
+| Dados no aparelho | `localStorage` chave `pulso.fit.v1` | `localStorage`: treino em `pulso.simples.v1`; demais módulos compartilham `pulso.fit.v1` |
+| Service worker | `app/sw.js` (cache `pulso-v7`) | `app/simples/sw.js` (cache `pulso-simples-v3`) |
+| Login/nuvem | Pronto no código, aguardando config | Mesma configuração Firebase da completa; backup unificado em arquivo |
 
-**Decisão importante (2026-11-16):** o Lucas achou a versão completa **difícil de entender** (montar treinos e acompanhar o treino têm funções demais). Em vez de mexer nela, foi criada a **versão Simples ao lado**. **A versão completa não deve ser apagada nem simplificada** ("essa versão está show"). As duas não compartilham dados (chaves diferentes) — de propósito, para uma não estragar a outra.
+**Decisão importante (2026-11-16):** o Lucas achou a versão completa **difícil de entender** (montar treinos e acompanhar o treino têm funções demais). Em vez de mexer nela, foi criada a **versão Simples ao lado**. **A versão completa não deve ser apagada nem simplificada** ("essa versão está show"). Até a v3.0, as duas interfaces mantinham dados separados. Na v3.1, o treino guiado preserva sua chave original; dieta, medidas e demais módulos reutilizam a chave da interface clássica, e o histórico guiado é incorporado ao acompanhamento sem duplicação.
 
 Por que a versão Simples existe, o que foi cortado e como medir se deu certo: **[docs/SIMPLES-UX.md](docs/SIMPLES-UX.md)**.
 
@@ -121,9 +121,9 @@ Regras de comportamento que não devem ser quebradas sem pensar:
 
 - Repositório local em `main`. **Tags:** `v2.1.0-completo` (versão completa preservada), `v3.0.0-simples` (versão Simples). Convenção: `vMAIOR.MENOR.PATCH-nome`.
 - Para voltar à versão completa intacta: `git checkout v2.1.0-completo -- app/index.html`.
-- **Ainda não há repositório remoto (GitHub).** Para criar: `gh repo create` ou criar no site e `git remote add origin …`. Ver a pergunta ao Lucas no fim da sessão de 2026-11-16.
+- **GitHub definido pelo Lucas:** https://github.com/ldiniz13/Aplicativo-Treino-e-Dieta · remoto `origin` · branch `main`. A autenticação local do GitHub CLI foi validada com permissão ADMIN.
 - `app/.vercel/` (ligação local com a Vercel) fica fora do git; cada computador gera a sua ao publicar.
-- Identidade do git é só local ao repositório (`user.name = Lucas`, `user.email = ldiniztavares@gmail.com`); ajuste se quiser.
+- Commits novos usam o endereço `noreply` do GitHub, mantendo a proteção de e-mail privado ativada.
 
 ## 9. Armadilhas já encontradas
 
@@ -139,6 +139,52 @@ Regras de comportamento que não devem ser quebradas sem pensar:
 - **Feedback do Lucas:** gostou do começo guiado da Simples, que direciona a montagem do treino. Sentiu falta do restante do app, que era o diferencial.
 - **Direção para a próxima iteração:** manter a entrada guiada e recuperar os demais módulos da experiência completa, com navegação fácil. Treino e evolução sozinhos não representam toda a proposta.
 - Dieta, medidas, cardio e os demais recursos continuam preservados na completa em `/`. A Simples continua em `/simples/`.
-- A integração dos módulos **ainda não foi implementada**. Nesta retomada não houve alteração no código do app nem publicação de nova versão.
+- A integração foi implementada na **v3.1.0**, descrita abaixo. A publicação na Vercel ainda não foi feita nesta sessão.
 - Instruções comuns de CLI e desktop em `../AGENTS.md`: handoffs atualizados, cuidado com trabalho paralelo e versionamento no GitHub.
 - No início desta retomada: repositório limpo, `main`, commit `a5e67c1`, sem remoto `origin`. GitHub em configuração.
+
+
+## 11. PULSO 3.1.0 — rotina completa com início guiado
+
+### O que mudou
+
+- `/simples/` agora tem cinco áreas: **Hoje, Treinos, Dieta, Evolução e Mais**.
+- O assistente e o treino de uma série por vez foram mantidos. Hoje acrescenta atalhos de alimentação e água e sugere o próximo passo sem bloquear o treino.
+- Dieta recupera o questionário, cardápio, banco de alimentos, refeições, macronutrientes, água, frutas/vegetais e etiquetas do dia.
+- Evolução mantém o progresso do treino e oferece Corpo (medidas) e Conquistas. Mais reúne cardio, treino acompanhado com voz, biblioteca/planos anteriores, conta e preferências.
+- Os módulos usam o mesmo motor e dados da interface clássica, dentro da navegação guiada. A interface clássica em `/` foi preservada.
+- Treinos concluídos e pesos da interface guiada entram no acompanhamento completo com identificadores estáveis, sem duplicar e sem apagar registros anteriores.
+- Backup completo reúne os dois blocos de dados e aceita backups anteriores. Importar um backup antigo de treino não apaga a dieta e medidas que ele não contém.
+
+### Código
+
+- `app/simples/js/rotina.js`: navegação, resumo do dia, próximos passos e backup unificado.
+- `app/simples/rotina.css`: navegação de cinco áreas e telas responsivas.
+- `app/modulos/integracao.js` e `.css`: adaptador dos módulos existentes; ativado apenas por `?integrado=...`.
+- `app/index.html`: pequenos pontos de integração e bibliotecas locais; funções originais preservadas.
+- `app/vendor/`: versões já utilizadas de Lucide e Chart.js, com suas licenças, disponíveis sem CDN.
+- `tools/testar-rotina.cjs`: teste de integração em navegador isolado.
+
+### Execução e verificação
+
+- Servidor: `python -m http.server 5173 --bind 127.0.0.1 --directory app`.
+- Versão nova: http://127.0.0.1:5173/simples/
+- Interface clássica: http://127.0.0.1:5173/
+- Auditoria do gerador: `node tools/auditar-planos.mjs` — 204 combinações, 0 problemas nesta sessão.
+- Teste de integração: instalar Playwright em pasta temporária e apontar `NODE_PATH` para seu `node_modules`; executar `node tools/testar-rotina.cjs` com o servidor acima ativo.
+- Não foi usado o perfil pessoal do navegador nos testes.
+
+### Pendências reais
+
+- Firebase continua não ativado: `app/firebase-config.js` não foi alterado. Sem configuração, o app informa que os dados ficam no aparelho e oferece backup. Não anunciar sincronização entre dispositivos como pronta.
+- Conferir em Android real, especialmente voz, vibração e instalação. Os testes automatizados usam navegador de desktop com viewport de celular.
+- Esta sessão preparou código e versionamento; não publicou uma nova implantação na Vercel.
+
+
+### Validação final desta versão
+
+- Teste de integração concluído com `PULSO_QA_OK`: assistente, plano, dieta/água, medidas, cardio, acompanhamento, treino com voz, conta, biblioteca e backup completo.
+- Um treino foi concluído pelo fluxo real de tela, incorporado ao acompanhamento e reaberto duas vezes: sem duplicação e preservando cardio e medidas.
+- Navegação conferida nas larguras 320, 375 e 1280 px; sem rolagem horizontal na página principal.
+- Recarga e módulo de dieta/hidratação testados sem internet após o cache assumir a página. Bibliotecas de ícones e gráficos ficam locais.
+- Tag desta entrega: `v3.1.0-rotina`. O estado do envio ao GitHub deve ser conferido pelo remoto, sem presumir publicação na Vercel.

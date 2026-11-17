@@ -1,0 +1,19 @@
+/* Aplicado somente quando um módulo é aberto dentro da navegação guiada. */
+html[data-pulso-integrado] { background:#0d0f12; }
+html[data-pulso-integrado] body { background:#0d0f12; min-height:100dvh; }
+html[data-pulso-integrado] .topbar,
+html[data-pulso-integrado] .bottomnav { display:none !important; }
+html[data-pulso-integrado] #app { width:100%; max-width:none; padding:0; margin:0; }
+html[data-pulso-integrado] .view { padding:12px 4px 28px; max-width:none; margin:0; }
+html[data-pulso-integrado] .page-head h1 { font-size:25px; }
+html[data-pulso-integrado] .page-head { margin-top:0; }
+html[data-pulso-integrado] .sheet { max-height:94dvh; }
+html[data-pulso-integrado] .module-intro { display:grid; gap:20px; padding:24px; }
+html[data-pulso-integrado] .set-sec:has(a[href="simples/"]),
+html[data-pulso-integrado] .set-sec:has([data-action="reset-zero"]) { display:none; }
+@media(max-width:360px) {
+ html[data-pulso-integrado] .card { padding:14px; }
+ html[data-pulso-integrado] .grid2 { gap:8px; }
+}
+
+html[data-pulso-integrado] .module-demo { padding:12px 14px; margin-bottom:14px; border:1px solid rgba(255,181,71,.3); border-radius:14px; color:#ffcf85; background:rgba(255,181,71,.07); font-size:12px; line-height:1.6; }

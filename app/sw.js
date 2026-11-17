@@ -2,8 +2,8 @@
    Página e configuração do login: rede primeiro (recebem atualizações), cache se estiver sem internet.
    Bibliotecas (ícones, gráficos, Firebase), fontes e fotos: cache primeiro, atualiza em segundo plano.
    Login e dados da nuvem (googleapis) nunca passam pelo cache. */
-const CACHE = 'pulso-v5';
-const CORE = ['./', './index.html', './manifest.webmanifest', './firebase-config.js', './icons/icon-192.png', './icons/icon-512.png'];
+const CACHE = 'pulso-v7';
+const CORE = ['./', './index.html', './manifest.webmanifest', './firebase-config.js', './modulos/integracao.js', './modulos/integracao.css', './vendor/lucide.min.js', './vendor/chart.umd.min.js', './icons/icon-192.png', './icons/icon-512.png'];
 const EXTERNAL = /(^|\.)(cdn\.jsdelivr\.net|fonts\.googleapis\.com|fonts\.gstatic\.com|raw\.githubusercontent\.com|www\.gstatic\.com)$/;
 
 self.addEventListener('install', e => {

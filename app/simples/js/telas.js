@@ -62,7 +62,7 @@
   }
   function vPlano() {
     const p = P.S.plano;
-    const cab = cabecalho('Seus treinos', 'Plano');
+    const cab = cabecalho('Seus treinos', 'Treinos');
     if (!p) return `${cab}<section class="cartao vazio">${ic('lista')}<p>Você ainda não tem um plano.</p><button class="btn btn-pri" data-a="assist-novo">${ic('magia')}Montar meu treino</button><button class="btn-link" data-a="plano-zero">Prefiro montar do zero</button></section>`;
     return `${cab}
       <section class="cartao"><div class="suave peq">${esc(P.resumoPlano(p))}</div>
